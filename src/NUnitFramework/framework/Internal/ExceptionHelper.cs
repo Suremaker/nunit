@@ -132,6 +132,14 @@ namespace NUnit.Framework.Internal
         {
             var result = new List<Exception>();
 
+            if (exception is ReflectionTypeLoadException)
+            {
+                var reflectionException = exception as ReflectionTypeLoadException;
+                result.AddRange(reflectionException.LoaderExceptions);
+
+                foreach (var innerException in reflectionException.LoaderExceptions)
+                    result.AddRange(FlattenExceptionHierarchy(innerException));
+            }
 #if ASYNC
             if (exception is AggregateException)
             {
